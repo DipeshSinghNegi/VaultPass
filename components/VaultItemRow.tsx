@@ -9,13 +9,23 @@ export default function VaultItemRow({ item, refresh }: { item: { _id: string; e
   const { cryptoKey } = useContext(AuthContext);
   const [editing, setEditing] = useState(false);
   const [plain, setPlain] = useState<VaultPlain | null>(null);
+  const [decrypting, setDecrypting] = useState(false);
   const { copied, copy } = useClipboardAutoClear();
 
   const ensureDecrypted = async () => {
     if (!cryptoKey) return;
     if (!plain) {
-      const p = await decryptVaultItem(cryptoKey, item.encrypted, item.iv);
-      setPlain(p);
+      try {
+        setDecrypting(true);
+        const p = await decryptVaultItem(cryptoKey, item.encrypted, item.iv);
+        setPlain(p);
+      } catch (e) {
+        // decryption failed - likely wrong key
+        console.error('decrypt failed', e);
+        alert('Decryption failed. Make sure you are logged in with the same account/password.');
+      } finally {
+        setDecrypting(false);
+      }
     }
   };
 
@@ -33,14 +43,27 @@ export default function VaultItemRow({ item, refresh }: { item: { _id: string; e
   };
 
   return (
-    <details className="rounded-2xl border overflow-hidden bg-white shadow-card">
-      <summary className="flex items-center justify-between px-4 py-3 cursor-pointer select-none bg-green-50" onClick={ensureDecrypted}>
+    <details className="rounded-2xl border overflow-hidden card">
+      <summary className="flex items-center justify-between px-4 py-3 cursor-pointer select-none" onClick={ensureDecrypted}>
         <div>
-          <div className="font-semibold">{plain?.title || "(encrypted)"}</div>
-          <div className="text-sm text-gray-600">{plain?.username ?? ""}</div>
+          <div className="font-semibold" style={{ color: 'var(--text)' }}>{plain?.title || "(encrypted)"}</div>
+          <div className="text-sm text-muted">{plain?.username ?? ""}</div>
+        </div>
+        <div className="flex items-center gap-2">
+          {!plain && (
+            <button
+              type="button"
+              className="btn btn-ghost"
+              onClick={(e) => { e.stopPropagation(); ensureDecrypted(); }}
+              disabled={!cryptoKey}
+              title={!cryptoKey ? 'Login or unlock your key to decrypt' : 'Decrypt'}
+            >
+              Decrypt (Double click)
+            </button>
+          )}
         </div>
       </summary>
-      <div className="bg-white px-4 py-3 space-y-2">
+  <div className="px-4 py-3 space-y-2">
         {plain ? (
           <div className="space-y-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -72,7 +95,16 @@ export default function VaultItemRow({ item, refresh }: { item: { _id: string; e
             </div>
           </div>
         ) : (
-          <div className="text-sm text-gray-600">Decrypting...</div>
+          <div className="text-sm text-muted">
+            {decrypting ? (
+              "Decrypting..."
+            ) : (
+              <div className="flex items-center gap-2">
+                <div>Encrypted</div>
+                <button className="btn btn-ghost" onClick={ensureDecrypted}>Decrypt</button>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </details>

@@ -35,9 +35,46 @@ export default function VaultPage() {
     }
   };
 
-  const decryptedIndex = useMemo(() => new Map<string, VaultPlain>(), []);
+  const [decryptedIndex, setDecryptedIndex] = useState<Map<string, VaultPlain>>(new Map());
 
-  const filtered = useMemo(() => items, [items]);
+  // attempt to decrypt items when cryptoKey is available and cache them in decryptedIndex
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (!cryptoKey) return;
+      for (const it of items) {
+        if (decryptedIndex.has(it._id)) continue;
+        try {
+          const p = await decryptVaultItem(cryptoKey, it.encrypted, it.iv);
+          if (cancelled) return;
+          setDecryptedIndex((prev) => {
+            const m = new Map(prev);
+            m.set(it._id, p);
+            return m;
+          });
+        } catch (e) {
+          // skip items that cannot be decrypted
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [items, cryptoKey, decryptedIndex]);
+
+  const filtered = useMemo(() => {
+    if (!query) return items;
+    const q = query.toLowerCase();
+    return items.filter((it) => {
+      const p = decryptedIndex.get(it._id);
+      if (p) {
+        return (p.title || "").toLowerCase().includes(q)
+          || (p.username || "").toLowerCase().includes(q)
+          || (p.url || "").toLowerCase().includes(q)
+          || (p.notes || "").toLowerCase().includes(q);
+      }
+      // fall back to matching against ciphertext (rare but better than nothing)
+      return it.encrypted.toLowerCase().includes(q) || it.iv.toLowerCase().includes(q);
+    });
+  }, [items, query, decryptedIndex]);
 
   return (
     <div className="space-y-8">

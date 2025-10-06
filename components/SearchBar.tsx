@@ -10,12 +10,23 @@ export default function SearchBar({
   onChange: (v: string) => void;
 }) {
   return (
-    <input
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder="Search Password..."
-      className="w-full rounded-full border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand/60"
-    />
+    <div className="relative">
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder="Search Password..."
+        className="input rounded-full"
+      />
+      {value && (
+        <button
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-sm text-gray-500"
+          onClick={() => onChange("")}
+          aria-label="Clear search"
+        >
+          ✕
+        </button>
+      )}
+    </div>
   );
 }
 

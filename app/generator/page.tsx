@@ -67,8 +67,9 @@ export default function GeneratorPage() {
           <Row label="Include symbols"><Checkbox checked={useSymbols} onChange={setUseSymbols} /></Row>
           <Row label="Exclude look-alike"><Checkbox checked={excludeSimilar} onChange={setExcludeSimilar} /></Row>
         </div>
-        <div className="flex justify-center mt-4">
+        <div className="flex justify-center mt-4 gap-3">
           <button className="btn btn-primary" onClick={generate}>Generate</button>
+          <a href="/vault" className="btn btn-secondary">Vault</a>
         </div>
       </div>
     </div>

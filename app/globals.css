@@ -5,27 +5,58 @@
 :root {
   --bg: #f5f7fb;
   --card: #ffffff;
+  --text: #0f172a;
+  --muted: rgba(15,23,42,0.6);
+  --brand: #10b981;
 }
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
 html, body {
-  @apply bg-[var(--bg)] text-gray-900;
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background: radial-gradient(1200px 400px at 10% 10%, rgba(16,185,129,0.04), transparent), var(--bg);
+  color: var(--text);
 }
 
 .dark {
-  --bg: #0b1220;
-  --card: #0f172a;
+  --bg: #071226;
+  --card: #0b1220;
+  --text: #e6eef8;
+  --muted: rgba(230,238,248,0.65);
+  --brand: #34d399;
 }
 
+/* muted text token for light/dark */
+.text-muted { color: var(--muted); }
+.dark .text-muted { color: var(--muted); }
+
+/* site header uses the bg token so it adapts to dark mode */
+.site-header { background: color-mix(in srgb, var(--bg) 90%, transparent); }
+.dark .site-header { background: color-mix(in srgb, var(--bg) 90%, transparent); }
+
 .input {
-  @apply w-full rounded-xl border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-brand/60 bg-white;
+  @apply w-full rounded-xl border px-4 py-2 focus:outline-none;
+  background: var(--card);
+  border-color: rgba(0,0,0,0.08);
+  color: var(--text, #0f172a);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+}
+
+.dark .input {
+  border-color: rgba(255,255,255,0.06);
+  color: var(--text);
 }
 
 .btn {
   @apply inline-flex items-center justify-center rounded-full px-4 py-2 text-sm font-medium transition disabled:opacity-60 disabled:cursor-not-allowed;
 }
 
-.btn-primary { @apply bg-gray-800 text-white hover:bg-black; }
-.btn-secondary { @apply bg-gray-200 hover:bg-gray-300; }
-.card { @apply bg-[var(--card)] rounded-2xl shadow-card; }
+.btn-primary { background: linear-gradient(180deg,var(--brand), #0ea36b); color: white; box-shadow: 0 6px 18px rgba(16,185,129,0.12); }
+.btn-secondary { background: rgba(0,0,0,0.06); color: var(--text); }
+.dark .btn-secondary { background: rgba(255,255,255,0.04); }
+.card { @apply bg-[var(--card)] rounded-2xl; box-shadow: 0 12px 30px rgba(2,6,23,0.06); }
+
+/* subtle utility */
+.muted-sm { color: var(--muted); font-size: 0.9rem; }
 
 
