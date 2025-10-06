@@ -90,6 +90,6 @@ Notes: Playwright tests require the dev server to be running at the configured U
 4. Toggle dark mode and ensure UI is readable
 5. Use search to find items by title/username/url/notes
 
-If you'd like I can: add an unlock modal (instead of browser prompt), remove the session raw key (harder security), or finalize Playwright tests + CI config. Just tell me which you'd prefer.
+
 
 
