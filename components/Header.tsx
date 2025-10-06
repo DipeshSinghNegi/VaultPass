@@ -19,7 +19,7 @@ export default function Header() {
 
         <div className="flex items-center gap-3">
           <Link href="/vault" className="px-3 py-1.5 rounded-full btn-secondary text-sm">Vault</Link>
-          <Link href="https://github.com" className="px-3 py-1.5 rounded-full bg-green-500 text-white text-sm">Github</Link>
+          <Link href="https://github.com/DipeshSinghNegi/VaultPass" className="px-3 py-1.5 rounded-full bg-green-500 text-white text-sm">Github</Link>
           <Link href="/generator" className="px-3 py-1.5 rounded-full btn-secondary text-sm">Generate</Link>
           <DarkToggle />
           {user ? (
